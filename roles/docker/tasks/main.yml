@@ -1,0 +1,27 @@
+---
+- name: Update and install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: yes
+
+- name: Install required system packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common' ]
+
+- name: Add Docker’s official GPG key
+  ansible.builtin.shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+- name: Set up the stable repository
+  ansible.builtin.shell: |
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Install Docker CE
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes
